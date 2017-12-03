@@ -31,8 +31,8 @@ AutoReqProv: no
 %build
 {{#prune}}
 npm prune --production
+npm rebuild
 {{/prune}}
-{{!npm rebuild}}
 
 %pre
 getent group {{username}} >/dev/null || groupadd -r {{username}}
@@ -44,7 +44,16 @@ cp -r ./ %{buildroot}/usr/lib/{{name}}
 mkdir -p %{buildroot}/var/log/{{name}}
 
 %post
-systemctl enable /usr/lib/{{name}}/{{name}}.service
+systemctl stop {{name}}
+systemctl disable {{name}}.service
+rm -f /etc/systemd/system/{{name}}.service
+cp /usr/lib/{{name}}/{{name}}.service /etc/systemd/system/{{name}}.service
+systemctl reset-failed
+systemctl daemon-reload
+systemctl enable {{name}}.service
+systemctl start {{name}}.service
+systemctl status {{name}}.service
+
 {{#postInstallCommands}}
 {{{.}}}
 {{/postInstallCommands}}
