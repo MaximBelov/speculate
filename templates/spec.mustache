@@ -55,6 +55,7 @@ systemctl daemon-reload
 systemctl enable {{name}}.service
 systemctl start {{name}}.service
 systemctl status {{name}}.service
+rm -rf /usr/lib/{{name}}/views
 cp -r /usr/lib/{{name}}/_server/views /usr/lib/{{name}}/views
 
 {{#postInstallCommands}}
